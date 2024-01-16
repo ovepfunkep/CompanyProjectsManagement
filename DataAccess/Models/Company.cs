@@ -11,10 +11,8 @@ namespace DataAccess.Models
 {
     public class Company
     {
-        [Key]
-        public int ID { get; set; }
-        [MaxLength(100), Index(IsUnique = true)]
-        public required string Name { get; set; }
+        [Key] public int ID { get; set; }
+        [Required, MaxLength(100), Index(IsUnique = true)] public required string Name { get; set; }
 
         // Relations
         public virtual ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();

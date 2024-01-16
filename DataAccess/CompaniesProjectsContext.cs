@@ -15,9 +15,8 @@ namespace DataAccess
 {
     public class CompaniesProjectsContext : DbContext
     {
-        private static readonly string DefaultConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=CompaniesProjects;";
+        private static readonly string DefaultConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=CompaniesProjectsDB;";
 
-        public int ID { get; set; }
         public DbSet<Company>? Companies { get; set; }
         public DbSet<Employee>? Employees { get; set; }
         public DbSet<Project>? Projects { get; set; }

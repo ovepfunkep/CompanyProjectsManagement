@@ -1,11 +1,11 @@
-﻿namespace DataAccess.Migrations
+﻿namespace TestDAL.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DataAccess.CompaniesProjectsContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<TestDAL.TestDbContext>
     {
         public Configuration()
         {
@@ -13,7 +13,7 @@
             AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(DataAccess.CompaniesProjectsContext context)
+        protected override void Seed(TestDAL.TestDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 
