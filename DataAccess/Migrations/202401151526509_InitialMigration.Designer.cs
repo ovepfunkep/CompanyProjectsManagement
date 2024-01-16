@@ -7,13 +7,13 @@ namespace DataAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class AddedPKsAndConstructorWithConnectionString : IMigrationMetadata
+    public sealed partial class InitialMigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddedPKsAndConstructorWithConnectionString));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialMigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "202401150952097_AddedPKsAndConstructorWithConnectionString"; }
+            get { return "202401151526509_InitialMigration"; }
         }
         
         string IMigrationMetadata.Source

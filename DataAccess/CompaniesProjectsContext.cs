@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration.Provider;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using DataAccess.Models;
@@ -15,12 +18,33 @@ namespace DataAccess
         private static readonly string DefaultConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=CompaniesProjects;";
 
         public int ID { get; set; }
-        public required DbSet<Company> Companies { get; set; }
-        public required DbSet<Employee> Employees { get; set; }
-        public required DbSet<Project> Projects { get; set; }
+        public DbSet<Company>? Companies { get; set; }
+        public DbSet<Employee>? Employees { get; set; }
+        public DbSet<Project>? Projects { get; set; }
 
         public CompaniesProjectsContext(string connectionString) : base(connectionString) { }
 
         public CompaniesProjectsContext() : base(DefaultConnectionString) { }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Project>()
+                        .HasRequired(p => p.Manager)
+                        .WithMany(m => m.Projects)
+                        .HasForeignKey(p => p.ManagerID)
+                        .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Project>()
+                        .HasRequired(p => p.CustomerCompany)
+                        .WithMany(cc => cc.OrderedProjects)
+                        .HasForeignKey(p => p.CustomerCompanyID)
+                        .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Project>()
+                        .HasRequired(p => p.ContractorCompany)
+                        .WithMany(cc => cc.MadenProjects)
+                        .HasForeignKey(p => p.ContractorCompanyID)
+                        .WillCascadeOnDelete(false);
+        }
     }
 }
