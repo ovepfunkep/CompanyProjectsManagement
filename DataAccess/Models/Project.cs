@@ -9,21 +9,21 @@ namespace DataAccess.Models
 {
     public class Project
     {
-        [Key]
-        public int ID { get; set; }
-        [MaxLength(100)]
-        public required string Name { get; set; }
-        public DateTime DateStarted { get; set; }
-        public DateTime DateEnded { get; set; }
-        public int Priority { get; set; }
+        [Key] public int ID { get; set; }
+        [Required, MaxLength(100), MinLength(1)] public required string Name { get; set; }
+        public DateTime? DateStarted { get; set; }
+        public DateTime? DateEnded { get; set; }
+        public int? Priority { get; set; }
 
-        // Relations
-        public required int ManagerID { get; set; }
-        public required Employee Manager { get; set; }
-        public required int CustomerCompanyID { get; set; }
-        public required Company CustomerCompany { get; set; }
-        public required int ContractorCompanyID { get; set; }
-        public required Company ContractorCompany { get; set; }
-        public ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
+        // Foreign keys
+        [Required] public required int ManagerID { get; set; }
+        [Required] public required int CustomerCompanyID { get; set; }
+        [Required] public required int ContractorCompanyID { get; set; }
+
+        // Navigation
+        public virtual Employee? Manager { get; set; }
+        public virtual Company? CustomerCompany { get; set; }
+        public virtual Company? ContractorCompany { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
     }
 }
