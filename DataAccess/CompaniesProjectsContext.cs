@@ -15,7 +15,7 @@ namespace DataAccess
 {
     public class CompaniesProjectsContext : DbContext
     {
-        private static readonly string DefaultConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=CompaniesProjectsDB;";
+        private static readonly string DefaultConnectionString = @"Server=DESKTOP-RO7HB57;Database=CPMMaster;Trusted_Connection=True;";
 
         public DbSet<Company>? Companies { get; set; }
         public DbSet<Employee>? Employees { get; set; }

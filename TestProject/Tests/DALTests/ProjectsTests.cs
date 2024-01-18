@@ -1,30 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Validation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using DataAccess.Models;
-using static TestDAL.TestsHelper;
 
 using TestDAL;
 
-namespace TestProject.Tests.DAL
+using static TestDAL.TestsExtensions;
+
+namespace TestProject.Tests.DALTests
 {
-    public class EmployeesTests
+    public class ProjectsTests
     {
         DbContext DBContext;
+        DbSet<Project> DBProjects;
         DbSet<Employee> DBEmployees;
+        DbSet<Company> DBCompanies;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             DBContext = new TestDbContext();
 
-            DBContext.Database.Delete();
-            DBContext.Database.Create();
+            var (success, errorMessage) = ClearDatabase(DBContext);
+
+            if (!success) { Assert.Fail($"Database clearing failed. Error: {errorMessage}"); }
 
             DBContext.Dispose();
         }
@@ -34,7 +33,9 @@ namespace TestProject.Tests.DAL
         {
             DBContext = new TestDbContext();
 
+            DBProjects = DBContext.Set<Project>();
             DBEmployees = DBContext.Set<Employee>();
+            DBCompanies = DBContext.Set<Company>();
 
             DBContext.Database.BeginTransaction();
         }
@@ -46,75 +47,96 @@ namespace TestProject.Tests.DAL
             DBContext.Dispose();
         }
 
-        [Test] 
+        [Test]
         public void Add_ValidData_DoesntThrowException()
         {
             // Arrange
             var employee = CreateTestEmployee();
+            var company = CreateTestCompany();
+            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
 
             // Act
             DBEmployees.Add(employee);
+            DBCompanies.Add(company);
+            DBProjects.Add(project);
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
         }
 
-        [Test] 
+        [Test]
         public void Add_InvalidData_ThrowsException()
         {
             // Arrange
-            var employee = CreateTestEmployee(GetLongString());
+            var employee = CreateTestEmployee();
+            var company = CreateTestCompany();
+            var project = CreateTestProject(GetLongString(), employee, company);
 
-            // Act 
+            // Act
             DBEmployees.Add(employee);
+            DBCompanies.Add(company);
+            DBProjects.Add(project);
 
             // Act and Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
         }
 
-        [Test] 
+        [Test]
         public void Modify_ValidData_DoesntThrowException()
         {
             // Arrange
             var employee = CreateTestEmployee();
+            var company = CreateTestCompany();
+            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
 
             // Act
             DBEmployees.Add(employee);
+            DBCompanies.Add(company);
+            DBProjects.Add(project);
             DBContext.SaveChanges();
-            employee.Name = "newName";
+            project.Name = "NewProjectName";
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
         }
 
-        [Test] 
+        [Test]
         public void Modify_InvalidData_ThrowsException()
         {
             // Arrange
             var employee = CreateTestEmployee();
+            var company = CreateTestCompany();
+            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
 
             // Act
             DBEmployees.Add(employee);
+            DBCompanies.Add(company);
+            DBProjects.Add(project);
             DBContext.SaveChanges();
-            employee.Name = GetLongString();
+            project.Name = GetLongString();
 
             // Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
         }
 
-        [Test] 
+        [Test]
         public void Delete_DoesntThrowException()
         {
             // Arrange
             var employee = CreateTestEmployee();
+            var company = CreateTestCompany();
+            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
 
             // Act
             DBEmployees.Add(employee);
+            DBCompanies.Add(company);
+            DBProjects.Add(project);
             DBContext.SaveChanges();
-            DBEmployees.Remove(employee);
+            DBProjects.Remove(project);
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
+            Assert.That(DBProjects.Count, Is.EqualTo(0));
         }
     }
 }

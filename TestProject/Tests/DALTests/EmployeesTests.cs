@@ -7,24 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DataAccess.Models;
-using static TestDAL.TestsHelper;
+using static TestDAL.TestsExtensions;
 
 using TestDAL;
 
-namespace TestProject.Tests.DAL
+namespace TestProject.Tests.DALTests
 {
-    public class CompaniesTests
+    public class EmployeesTests
     {
         DbContext DBContext;
-        DbSet<Company> DBCompanies;
+        DbSet<Employee> DBEmployees;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             DBContext = new TestDbContext();
 
-            DBContext.Database.Delete();
-            DBContext.Database.Create();
+            var (success, errorMessage) = ClearDatabase(DBContext);
+
+            if (!success) { Assert.Fail($"Database clearing failed. Error: {errorMessage}"); }
 
             DBContext.Dispose();
         }
@@ -34,7 +35,7 @@ namespace TestProject.Tests.DAL
         {
             DBContext = new TestDbContext();
 
-            DBCompanies = DBContext.Set<Company>();
+            DBEmployees = DBContext.Set<Employee>();
 
             DBContext.Database.BeginTransaction();
         }
@@ -50,10 +51,10 @@ namespace TestProject.Tests.DAL
         public void Add_ValidData_DoesntThrowException()
         {
             // Arrange
-            var company = CreateTestCompany();
+            var employee = CreateTestEmployee();
 
             // Act
-            DBCompanies.Add(company);
+            DBEmployees.Add(employee);
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
@@ -63,10 +64,10 @@ namespace TestProject.Tests.DAL
         public void Add_InvalidData_ThrowsException()
         {
             // Arrange
-            var company = CreateTestCompany(GetLongString());
+            var employee = CreateTestEmployee(GetLongString());
 
             // Act 
-            DBCompanies.Add(company);
+            DBEmployees.Add(employee);
 
             // Act and Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
@@ -76,12 +77,12 @@ namespace TestProject.Tests.DAL
         public void Modify_ValidData_DoesntThrowException()
         {
             // Arrange
-            var company = CreateTestCompany();
+            var employee = CreateTestEmployee();
 
             // Act
-            DBCompanies.Add(company);
+            DBEmployees.Add(employee);
             DBContext.SaveChanges();
-            company.Name = "newName";
+            employee.Name = "newName";
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
@@ -91,12 +92,12 @@ namespace TestProject.Tests.DAL
         public void Modify_InvalidData_ThrowsException()
         {
             // Arrange
-            var company = CreateTestCompany();
+            var employee = CreateTestEmployee();
 
             // Act
-            DBCompanies.Add(company);
+            DBEmployees.Add(employee);
             DBContext.SaveChanges();
-            company.Name = GetLongString();
+            employee.Name = GetLongString();
 
             // Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
@@ -106,15 +107,16 @@ namespace TestProject.Tests.DAL
         public void Delete_DoesntThrowException()
         {
             // Arrange
-            var company = CreateTestCompany();
+            var employee = CreateTestEmployee();
 
             // Act
-            DBCompanies.Add(company);
+            DBEmployees.Add(employee);
             DBContext.SaveChanges();
-            DBCompanies.Remove(company);
+            DBEmployees.Remove(employee);
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
+            Assert.That(DBEmployees.Count, Is.EqualTo(0));
         }
     }
 }

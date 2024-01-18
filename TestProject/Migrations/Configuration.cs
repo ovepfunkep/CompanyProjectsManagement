@@ -1,4 +1,4 @@
-﻿namespace TestDAL.Migrations
+﻿namespace TestProject.Migrations
 {
     using System;
     using System.Data.Entity;
