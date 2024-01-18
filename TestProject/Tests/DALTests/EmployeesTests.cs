@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Validation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using DataAccess.Models;
-using static TestDAL.TestsExtensions;
 
 using TestDAL;
+
+using static TestDAL.TestsExtensions;
 
 namespace TestProject.Tests.DALTests
 {
@@ -25,7 +21,7 @@ namespace TestProject.Tests.DALTests
 
             var (success, errorMessage) = ClearDatabase(DBContext);
 
-            if (!success) { Assert.Fail($"Database clearing failed. Error: {errorMessage}"); }
+            if (!success) Assert.Fail($"Database clearing failed. Error: {errorMessage}");
 
             DBContext.Dispose();
         }

@@ -23,7 +23,7 @@ namespace TestProject.Tests.DALTests
 
             var (success, errorMessage) = ClearDatabase(DBContext);
 
-            if (!success) { Assert.Fail($"Database clearing failed. Error: {errorMessage}"); }
+            if (!success) Assert.Fail($"Database clearing failed. Error: {errorMessage}");
 
             DBContext.Dispose();
         }
@@ -51,13 +51,13 @@ namespace TestProject.Tests.DALTests
         public void Add_ValidData_DoesntThrowException()
         {
             // Arrange
-            var employee = CreateTestEmployee();
-            var company = CreateTestCompany();
-            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
+            var customerCompany = CreateTestCompany("CustomerCompany");
+            var project = CreateTestProject(givenCustomer: customerCompany);
 
             // Act
-            DBEmployees.Add(employee);
-            DBCompanies.Add(company);
+            DBEmployees.AddRange(project.Employees);
+            DBCompanies.Add(project.CustomerCompany);
+            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
 
             // Assert
@@ -68,13 +68,11 @@ namespace TestProject.Tests.DALTests
         public void Add_InvalidData_ThrowsException()
         {
             // Arrange
-            var employee = CreateTestEmployee();
-            var company = CreateTestCompany();
-            var project = CreateTestProject(GetLongString(), employee, company);
+            var project = CreateTestProject(GetLongString());
 
             // Act
-            DBEmployees.Add(employee);
-            DBCompanies.Add(company);
+            DBEmployees.AddRange(project.Employees);
+            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
 
             // Act and Assert
@@ -85,13 +83,11 @@ namespace TestProject.Tests.DALTests
         public void Modify_ValidData_DoesntThrowException()
         {
             // Arrange
-            var employee = CreateTestEmployee();
-            var company = CreateTestCompany();
-            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
+            var project = CreateTestProject();
 
             // Act
-            DBEmployees.Add(employee);
-            DBCompanies.Add(company);
+            DBEmployees.AddRange(project.Employees);
+            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
             DBContext.SaveChanges();
             project.Name = "NewProjectName";
@@ -104,13 +100,11 @@ namespace TestProject.Tests.DALTests
         public void Modify_InvalidData_ThrowsException()
         {
             // Arrange
-            var employee = CreateTestEmployee();
-            var company = CreateTestCompany();
-            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
+            var project = CreateTestProject();
 
             // Act
-            DBEmployees.Add(employee);
-            DBCompanies.Add(company);
+            DBEmployees.AddRange(project.Employees);
+            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
             DBContext.SaveChanges();
             project.Name = GetLongString();
@@ -123,13 +117,11 @@ namespace TestProject.Tests.DALTests
         public void Delete_DoesntThrowException()
         {
             // Arrange
-            var employee = CreateTestEmployee();
-            var company = CreateTestCompany();
-            var project = CreateTestProject(givenEmployee: employee, givenCompany: company);
+            var project = CreateTestProject();
 
             // Act
-            DBEmployees.Add(employee);
-            DBCompanies.Add(company);
+            DBEmployees.AddRange(project.Employees);
+            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
             DBContext.SaveChanges();
             DBProjects.Remove(project);
