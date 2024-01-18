@@ -6,7 +6,6 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using DataAccess.Models;
@@ -27,23 +26,29 @@ namespace DataAccess
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Project>()
-                        .HasRequired(p => p.Manager)
-                        .WithMany(m => m.Projects)
+            modelBuilder.Entity<Employee>()
+                        .HasMany(e => e.ParticipatedProjects)
+                        .WithMany(p => p.Employees);
+
+            modelBuilder.Entity<Employee>()
+                        .HasMany(e => e.ManagedProjects)
+                        .WithRequired(p => p.Manager!)
                         .HasForeignKey(p => p.ManagerID)
                         .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Project>()
-                        .HasRequired(p => p.CustomerCompany)
-                        .WithMany(cc => cc.OrderedProjects)
+            modelBuilder.Entity<Company>()
+                        .HasMany(c => c.OrderedProjects)
+                        .WithRequired(p => p.CustomerCompany!)
                         .HasForeignKey(p => p.CustomerCompanyID)
                         .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Project>()
-                        .HasRequired(p => p.ContractorCompany)
-                        .WithMany(cc => cc.MadenProjects)
+            modelBuilder.Entity<Company>()
+                        .HasMany(c => c.MadenProjects)
+                        .WithRequired(p => p.ContractorCompany!)
                         .HasForeignKey(p => p.ContractorCompanyID)
                         .WillCascadeOnDelete(false);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

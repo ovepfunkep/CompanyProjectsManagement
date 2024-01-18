@@ -20,12 +20,14 @@ namespace DataAccess.Models
         public DateTime? DateEnded { get; set; }
         public int? Priority { get; set; }
 
-        // Relations
+        // Foreign keys
         [Required] public required int ManagerID { get; set; }
-        public virtual Employee? Manager { get; set; }
         [Required] public required int CustomerCompanyID { get; set; }
-        public virtual Company? CustomerCompany { get; set; }
         [Required] public required int ContractorCompanyID { get; set; }
+
+        // Navigation
+        public virtual Employee? Manager { get; set; }
+        public virtual Company? CustomerCompany { get; set; }
         public virtual Company? ContractorCompany { get; set; }
         public virtual ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
     }

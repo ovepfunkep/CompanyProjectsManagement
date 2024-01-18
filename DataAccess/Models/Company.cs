@@ -14,7 +14,7 @@ namespace DataAccess.Models
         [Key] public int ID { get; set; }
         [Required, MaxLength(100), Index(IsUnique = true)] public required string Name { get; set; }
 
-        // Relations
+        // Navigation
         public virtual ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
         public virtual ICollection<Project> OrderedProjects { get; set; } = new HashSet<Project>();
         public virtual ICollection<Project> MadenProjects { get; set; } = new HashSet<Project>();
