@@ -57,17 +57,85 @@ namespace TestProject.Tests.DALTests
         }
 
         [Test]
-        public void Add_InvalidData_ThrowsException()
+        public void Add_LongNameEmployee_ThrowsException()
         {
             // Arrange
-            var employee = CreateTestEmployee(GetLongString());
-
-            // Act 
-            DBEmployees.Add(employee);
+            var longNameEmployee = CreateTestEmployee(GetLongString());
 
             // Act and Assert
-            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(longNameEmployee); DBContext.SaveChanges(); });
         }
+
+        [Test]
+        public void Add_LongSurnameEmployee_ThrowsException()
+        {
+            // Arrange
+            var longSurnameEmployee = CreateTestEmployee(surname: GetLongString());
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(longSurnameEmployee); DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_LongPatronymicEmployee_ThrowsException()
+        {
+            // Arrange
+            var longPatronymicEmployee = CreateTestEmployee(patronymic: GetLongString());
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(longPatronymicEmployee); DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_LongEmailEmployee_ThrowsException()
+        {
+            // Arrange
+            var longEmailEmployee = CreateTestEmployee(email: GetLongString());
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(longEmailEmployee); DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_ShortNameEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortNameEmployee = CreateTestEmployee("");
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(shortNameEmployee); DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_ShortSurnameEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortSurnameEmployee = CreateTestEmployee(surname: "");
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(shortSurnameEmployee); DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_ShortPatronymicEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortPatronymicEmployee = CreateTestEmployee(patronymic: "");
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(shortPatronymicEmployee); DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_ShortEmailEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortEmailEmployee = CreateTestEmployee(email: "");
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBEmployees.Add(shortEmailEmployee); DBContext.SaveChanges(); });
+        }
+
 
         [Test]
         public void Modify_ValidData_DoesntThrowException()
@@ -85,15 +153,120 @@ namespace TestProject.Tests.DALTests
         }
 
         [Test]
-        public void Modify_InvalidData_ThrowsException()
+        public void Modify_LongNameEmployee_ThrowsException()
         {
             // Arrange
-            var employee = CreateTestEmployee();
+            var longNameEmployee = CreateTestEmployee();
+            DBEmployees.Add(longNameEmployee);
+            DBContext.SaveChanges();
 
             // Act
-            DBEmployees.Add(employee);
+            longNameEmployee.Name = GetLongString();
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_LongSurnameEmployee_ThrowsException()
+        {
+            // Arrange
+            var longSurnameEmployee = CreateTestEmployee();
+            DBEmployees.Add(longSurnameEmployee);
             DBContext.SaveChanges();
-            employee.Name = GetLongString();
+
+            // Act
+            longSurnameEmployee.Surname = GetLongString();
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_LongPatronymicEmployee_ThrowsException()
+        {
+            // Arrange
+            var longPatronymicEmployee = CreateTestEmployee();
+            DBEmployees.Add(longPatronymicEmployee);
+            DBContext.SaveChanges();
+
+            // Act
+            longPatronymicEmployee.Patronymic = GetLongString();
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_LongEmailEmployee_ThrowsException()
+        {
+            // Arrange
+            var longEmailEmployee = CreateTestEmployee();
+            DBEmployees.Add(longEmailEmployee);
+            DBContext.SaveChanges();
+
+            // Act
+            longEmailEmployee.Email = GetLongString();
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_ShortNameEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortNameEmployee = CreateTestEmployee();
+            DBEmployees.Add(shortNameEmployee);
+            DBContext.SaveChanges();
+
+            // Act
+            shortNameEmployee.Name = "";
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_ShortSurnameEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortSurnameEmployee = CreateTestEmployee();
+            DBEmployees.Add(shortSurnameEmployee);
+            DBContext.SaveChanges();
+
+            // Act
+            shortSurnameEmployee.Surname = "";
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_ShortPatronymicEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortPatronymicEmployee = CreateTestEmployee();
+            DBEmployees.Add(shortPatronymicEmployee);
+            DBContext.SaveChanges();
+
+            // Act
+            shortPatronymicEmployee.Patronymic = "";
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_ShortEmailEmployee_ThrowsException()
+        {
+            // Arrange
+            var shortEmailEmployee = CreateTestEmployee();
+            DBEmployees.Add(shortEmailEmployee);
+            DBContext.SaveChanges();
+
+            // Act
+            shortEmailEmployee.Email = "";
 
             // Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });

@@ -11,39 +11,45 @@ namespace TestDAL
                                                   DateTime? dateEnded = null,
                                                   int? priority = null,
                                                   Employee? givenManager = null, 
-                                                  Company? givenContractor = null, 
                                                   Company? givenCustomer = null, 
                                                   ICollection<Employee>? employees = null)
         {
             var manager = givenManager ?? CreateTestEmployee();
-            var contractor = givenContractor ?? CreateTestCompany();
-            var customer = givenCustomer ?? contractor;
+            var contractor = manager.Company;
+            var customer = givenCustomer ?? CreateTestCompany("CustomerCompany");
             return new Project()
             {
                 Name = name ?? "TestProject",
                 DateStarted = dateStarted ?? DateTime.Now,
                 DateEnded = dateEnded ?? DateTime.Now,
                 Priority = priority ?? 0,
-                ManagerID = manager.ID,
+                ManagerID = -1,
                 Manager = manager,
-                CustomerCompanyID = customer.ID,
-                ContractorCompanyID = contractor.ID,
+                CustomerCompanyID = -1,
+                ContractorCompanyID = -1,
                 CustomerCompany = customer,
                 ContractorCompany = contractor,
-                Employees = employees ?? new HashSet<Employee>() { manager, CreateTestEmployee("TestEmployee1", "Testov1") }
+                Employees = employees ?? new HashSet<Employee>() { manager, CreateTestEmployee("TestEmployee1", "Testov1", givenCompany: contractor) }
             };
         }
 
-        internal static Employee CreateTestEmployee(string? name = null, 
+        internal static Employee CreateTestEmployee(string? name = null,
                                                     string? surname = null,
-                                                    string? patronymic = null, 
-                                                    string? email = null) => new()
+                                                    string? patronymic = null,
+                                                    string? email = null,
+                                                    Company? givenCompany = null)
         {
-            Name = name ?? "TestEmployee",
-            Surname = surname ?? "Testov",
-            Patronymic = patronymic ?? "Testovich",
-            Email = email ?? "Test@mail.ru"
-        };
+            var company = givenCompany ?? CreateTestCompany();
+            return new()
+            {
+                Name = name ?? "TestEmployee",
+                Surname = surname ?? "Testov",
+                Company = company,
+                CompanyID = company.ID,
+                Patronymic = patronymic ?? "Testovich",
+                Email = email ?? "Test@mail.ru"
+            };
+        }
 
         internal static Company CreateTestCompany(string? name = null) => new() { Name = name ?? "TestCompany" };
 
