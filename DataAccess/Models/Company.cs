@@ -12,7 +12,7 @@ namespace DataAccess.Models
     public class Company
     {
         [Key] public int ID { get; set; }
-        [Required, MaxLength(100), Index(IsUnique = true)] public required string Name { get; set; }
+        [Required, MaxLength(100), MinLength(1), Index(IsUnique = true)] public required string Name { get; set; }
 
         // Navigation
         public virtual ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
