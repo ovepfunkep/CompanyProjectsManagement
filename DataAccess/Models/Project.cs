@@ -23,7 +23,6 @@ namespace DataAccess.Models
         // Foreign keys
         [Required] 
         public required int ManagerID { get; set; }
-        [NotEqual("ContractorCompanyID")]
         public required int CustomerCompanyID { get; set; }
         public required int ContractorCompanyID { get; set; }
 
