@@ -21,9 +21,10 @@ namespace DataAccess.Models
         public int? Priority { get; set; }
 
         // Foreign keys
-        [Required] public required int ManagerID { get; set; }
-        [Required] public required int CustomerCompanyID { get; set; }
-        [Required] public required int ContractorCompanyID { get; set; }
+        [Required] 
+        public required int ManagerID { get; set; }
+        public required int CustomerCompanyID { get; set; }
+        public required int ContractorCompanyID { get; set; }
 
         // Navigation
         public virtual Employee? Manager { get; set; }

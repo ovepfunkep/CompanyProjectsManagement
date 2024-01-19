@@ -48,6 +48,12 @@ namespace DataAccess
                         .HasForeignKey(p => p.ContractorCompanyID)
                         .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Company>()
+                        .HasMany(c => c.Employees)
+                        .WithRequired(e => e.Company!)
+                        .HasForeignKey(e => e.CompanyID)
+                        .WillCascadeOnDelete(false);
+
             base.OnModelCreating(modelBuilder);
         }
     }
