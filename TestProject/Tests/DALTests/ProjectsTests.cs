@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 
 using DataAccess.Models;
@@ -13,8 +14,6 @@ namespace TestProject.Tests.DALTests
     {
         DbContext DBContext;
         DbSet<Project> DBProjects;
-        DbSet<Employee> DBEmployees;
-        DbSet<Company> DBCompanies;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -34,8 +33,6 @@ namespace TestProject.Tests.DALTests
             DBContext = new TestDbContext();
 
             DBProjects = DBContext.Set<Project>();
-            DBEmployees = DBContext.Set<Employee>();
-            DBCompanies = DBContext.Set<Company>();
 
             DBContext.Database.BeginTransaction();
         }
@@ -55,24 +52,32 @@ namespace TestProject.Tests.DALTests
             var project = CreateTestProject(givenCustomer: customerCompany);
 
             // Act
-            DBEmployees.AddRange(project.Employees);
-            DBCompanies.Add(project.CustomerCompany);
-            DBCompanies.Add(project.ContractorCompany);
-            DBProjects.Add(project);
+            DBProjects.AddOrUpdate(project);
 
             // Assert
             Assert.DoesNotThrow(() => { DBContext.SaveChanges(); });
         }
 
         [Test]
-        public void Add_InvalidData_ThrowsException()
+        public void Add_LongNameProject_ThrowsException()
         {
             // Arrange
             var project = CreateTestProject(GetLongString());
 
             // Act
-            DBEmployees.AddRange(project.Employees);
-            DBCompanies.Add(project.ContractorCompany);
+            DBProjects.Add(project);
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_ShortNameProject_ThrowsException()
+        {
+            // Arrange
+            var project = CreateTestProject("");
+
+            // Act
             DBProjects.Add(project);
 
             // Act and Assert
@@ -86,8 +91,6 @@ namespace TestProject.Tests.DALTests
             var project = CreateTestProject();
 
             // Act
-            DBEmployees.AddRange(project.Employees);
-            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
             DBContext.SaveChanges();
             project.Name = "NewProjectName";
@@ -97,19 +100,32 @@ namespace TestProject.Tests.DALTests
         }
 
         [Test]
-        public void Modify_InvalidData_ThrowsException()
+        public void Modify_LongNameProject_ThrowsException()
         {
             // Arrange
             var project = CreateTestProject();
-
-            // Act
-            DBEmployees.AddRange(project.Employees);
-            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
             DBContext.SaveChanges();
+
+            // Act
             project.Name = GetLongString();
 
-            // Assert
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_ShortNameProject_ThrowsException()
+        {
+            // Arrange
+            var project = CreateTestProject();
+            DBProjects.Add(project);
+            DBContext.SaveChanges();
+
+            // Act
+            project.Name = "";
+
+            // Act and Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
         }
 
@@ -120,8 +136,6 @@ namespace TestProject.Tests.DALTests
             var project = CreateTestProject();
 
             // Act
-            DBEmployees.AddRange(project.Employees);
-            DBCompanies.Add(project.ContractorCompany);
             DBProjects.Add(project);
             DBContext.SaveChanges();
             DBProjects.Remove(project);

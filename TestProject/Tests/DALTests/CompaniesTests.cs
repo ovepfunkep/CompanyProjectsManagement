@@ -48,6 +48,8 @@ namespace TestProject.Tests.DALTests
         {
             // Arrange
             var company = CreateTestCompany();
+            company.Employees.Add(CreateTestEmployee(givenCompany: company));
+            company.Employees.Add(CreateTestEmployee(givenCompany: company));
 
             // Act
             DBCompanies.Add(company);
@@ -57,13 +59,41 @@ namespace TestProject.Tests.DALTests
         }
 
         [Test]
-        public void Add_InvalidData_ThrowsException()
+        public void Add_LongNameCompany_ThrowsException()
         {
             // Arrange
             var company = CreateTestCompany(GetLongString());
 
             // Act 
             DBCompanies.Add(company);
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_ShortNameCompany_ThrowsException()
+        {
+            // Arrange
+            var company = CreateTestCompany("");
+
+            // Act 
+            DBCompanies.Add(company);
+
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Add_CompanyTwice_ThrowsException()
+        {
+            // Arrange
+            var company = CreateTestCompany("");
+            var companyCopy = CreateTestCompany(company.Name);
+
+            // Act 
+            DBCompanies.Add(company);
+            DBCompanies.Add(companyCopy);
 
             // Act and Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
@@ -85,17 +115,32 @@ namespace TestProject.Tests.DALTests
         }
 
         [Test]
-        public void Modify_InvalidData_ThrowsException()
+        public void Modify_LongNameCompany_ThrowsException()
         {
             // Arrange
             var company = CreateTestCompany();
-
-            // Act
             DBCompanies.Add(company);
             DBContext.SaveChanges();
+
+            // Act 
             company.Name = GetLongString();
 
-            // Assert
+            // Act and Assert
+            Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
+        }
+
+        [Test]
+        public void Modify_ShortNameCompany_ThrowsException()
+        {
+            // Arrange
+            var company = CreateTestCompany();
+            DBCompanies.Add(company);
+            DBContext.SaveChanges();
+
+            // Act 
+            company.Name = "";
+
+            // Act and Assert
             Assert.Throws<DbEntityValidationException>(() => { DBContext.SaveChanges(); });
         }
 
