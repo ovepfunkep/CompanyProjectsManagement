@@ -23,9 +23,7 @@ namespace DataAccess.Models
         // Foreign keys
         [Required] 
         public required int ManagerID { get; set; }
-        [Required, Index("IX_CustomerAndContractor", 1, IsUnique = true)] 
         public required int CustomerCompanyID { get; set; }
-        [Required, Index("IX_CustomerAndContractor", 2, IsUnique = true)]
         public required int ContractorCompanyID { get; set; }
 
         // Navigation
