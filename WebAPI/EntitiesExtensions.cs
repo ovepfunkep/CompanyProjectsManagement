@@ -5,7 +5,7 @@ namespace WebAPI
 {
     public static class EntityExtensions
     {
-        public static void UpdateProperties<T>(this T target, T source, params Expression<Func<T, object?>>[] propertiesToUpdate)
+        public static void CopyProperties<T>(this T target, T source, params Expression<Func<T, object?>>[] propertiesToUpdate)
         {
             foreach (var property in propertiesToUpdate)
             {

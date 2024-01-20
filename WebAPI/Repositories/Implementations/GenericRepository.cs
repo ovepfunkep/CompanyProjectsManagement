@@ -1,8 +1,9 @@
 ﻿using System.Data.Entity;
+using WebAPI.Services.Interfaces;
 
-namespace WebAPI.Repositories
+namespace WebAPI.Services.Implementations
 {
-    public class GenericService<T>(AppDbContext dbContext) : IGenericService<T> where T : class
+    public class GenericRepository<T>(AppDbContext dbContext) : IGenericRepository<T> where T : class
     {
         private readonly AppDbContext _dbContext = dbContext;
 
@@ -13,9 +14,9 @@ namespace WebAPI.Repositories
             return entity;
         }
 
-        public async Task<IEnumerable<T>> GetAsync() => await _dbContext.Set<T>().ToListAsync(); 
+        public async Task<IEnumerable<T>> GetAsync() => await _dbContext.Set<T>().ToListAsync();
 
-        public async Task<T> GetAsync(int id) => await _dbContext.Set<T>().FindAsync(id); 
+        public async Task<T> GetAsync(int id) => await _dbContext.Set<T>().FindAsync(id);
 
         public async Task<bool> UpdateAsync(T entity)
         {

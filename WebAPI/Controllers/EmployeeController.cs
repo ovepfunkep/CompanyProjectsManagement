@@ -1,21 +1,21 @@
 ﻿using DataAccess.Models;
 
 using Microsoft.AspNetCore.Mvc;
-
-using WebAPI.Repositories;
+using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesController(IGenericService<Employee> employeeRepository) : ControllerBase
+    public class EmployeesController(ILinkedRepository<Employee> employeeRepository) : ControllerBase
     {
-        private readonly IGenericService<Employee> _employeeRepository = employeeRepository;
+        private readonly ILinkedRepository<Employee> _employeeRepository = employeeRepository;
 
         [HttpGet]
         public async Task<IActionResult> GetEmployees()
         {
             var employees = await _employeeRepository.GetAsync();
+
             return Ok(employees);
         }
 
@@ -24,10 +24,7 @@ namespace WebAPI.Controllers
         {
             var employee = await _employeeRepository.GetAsync(id);
 
-            if (employee == null)
-            {
-                return NotFound();
-            }
+            if (employee == null) return NotFound();
 
             return Ok(employee);
         }
@@ -44,12 +41,9 @@ namespace WebAPI.Controllers
         {
             var existingEmployee = await _employeeRepository.GetAsync(id);
 
-            if (existingEmployee == null)
-            {
-                return NotFound();
-            }
+            if (existingEmployee == null) return NotFound();
 
-            existingEmployee.UpdateProperties(employee,
+            existingEmployee.CopyProperties(employee,
                 e => e.Name,
                 e => e.Surname,
                 e => e.Patronymic,
@@ -59,30 +53,24 @@ namespace WebAPI.Controllers
 
             var updated = await _employeeRepository.UpdateAsync(existingEmployee);
 
-            if (updated)
-            {
-                return NoContent();
-            }
+            if (updated) return Ok(); 
 
             return BadRequest("Failed to update the employee");
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        public async Task<IActionResult> DeleteEmployee(int id, [FromQuery] bool cascade = false)
         {
             var existingEmployee = await _employeeRepository.GetAsync(id);
 
-            if (existingEmployee == null)
-            {
-                return NotFound();
-            }
+            if (existingEmployee == null) return NotFound(); 
 
-            var deleted = await _employeeRepository.DeleteAsync(existingEmployee);
+            bool deleted;
 
-            if (deleted)
-            {
-                return NoContent();
-            }
+            if (cascade) deleted = await _employeeRepository.CascadeDeleteAsync(existingEmployee);
+            else deleted = await _employeeRepository.DeleteAsync(existingEmployee);
+
+            if (deleted) return Ok();
 
             return BadRequest("Failed to delete the employee");
         }

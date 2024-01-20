@@ -1,6 +1,6 @@
-﻿namespace WebAPI.Repositories
+﻿namespace WebAPI.Services.Interfaces
 {
-    public interface IGenericService<T>
+    public interface IGenericRepository<T>
     {
         Task<T> AddAsync(T entity);
         Task<IEnumerable<T>> GetAsync();
@@ -8,5 +8,4 @@
         Task<bool> UpdateAsync(T entity);
         Task<bool> DeleteAsync(T entity);
     }
-
 }
