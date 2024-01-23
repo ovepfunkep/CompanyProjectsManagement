@@ -7,7 +7,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController(IGenericRepository<Project> projectRepository) : ControllerBase
+    public class ProjectsController(IGenericRepository<Project> projectRepository) : ControllerBase
     {
         private readonly IGenericRepository<Project> _projectRepository = projectRepository;
 

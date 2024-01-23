@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyController(ILinkedRepository<Company> companyRepository) : ControllerBase
+    public class CompaniesController(ILinkedRepository<Company> companyRepository) : ControllerBase
     {
         private readonly ILinkedRepository<Company> _companyRepository = companyRepository;
 

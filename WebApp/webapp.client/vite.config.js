@@ -11,7 +11,6 @@ if (!certificateName) {
     process.exit(-1);
 }
 
-// https://vitejs.dev/config/
 export default defineConfig({
     plugins: [plugin()],
     resolve: {
@@ -20,12 +19,6 @@ export default defineConfig({
         }
     },
     server: {
-        proxy: {
-            '^/weatherforecast': {
-                target: 'https://localhost:8080/',
-                secure: false
-            }
-        },
-        port: 8080
+        port: 80
     }
 })
