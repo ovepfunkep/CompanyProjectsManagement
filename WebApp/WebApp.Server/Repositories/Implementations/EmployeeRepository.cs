@@ -9,19 +9,17 @@ namespace WebAPI.Services.Implementations
     {
         private readonly AppDbContext _dbContext = dbContext;
 
-        public async Task<bool> CascadeDeleteAsync(Employee employee)
+        public async Task CascadeDeleteAsync(int id)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
             try
             {
-                // Delete related projects directly in the database
-                await _dbContext.Database.ExecuteSqlCommandAsync("DELETE FROM Projects WHERE ManagerID = {0}", employee.ID);
-                _dbContext.Set<Employee>().Remove(employee);
+                var linkedProjects = _dbContext.Set<Project>().Where(p => p.ManagerID == id);
+                _dbContext.Set<Project>().RemoveRange(linkedProjects);
+                _dbContext.Set<Employee>().Remove(_dbContext.Set<Employee>().Find(id));
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
-
-                return true;
             }
             catch (Exception)
             {

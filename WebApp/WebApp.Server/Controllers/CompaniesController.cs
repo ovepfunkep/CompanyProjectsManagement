@@ -34,14 +34,14 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCompany([FromBody] Company company)
         {
-            var addedCompany = await _companyRepository.AddAsync(company);
-            return CreatedAtAction(nameof(GetCompany), new { id = addedCompany.ID }, addedCompany);
+            await _companyRepository.AddAsync(company);
+            return CreatedAtAction(nameof(GetCompany), new { id = company.ID }, company);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCompany(int id, [FromBody] Company company)
+        [HttpPut]
+        public async Task<IActionResult> UpdateCompany([FromBody] Company company)
         {
-            var existingCompany = await _companyRepository.GetAsync(id);
+            var existingCompany = await _companyRepository.GetAsync(company.ID);
 
             if (existingCompany == null) return NotFound();
 
@@ -51,11 +51,16 @@ namespace WebAPI.Controllers
                 c => c.OrderedProjects,
                 c => c.MadenProjects);
 
-            var updated = await _companyRepository.UpdateAsync(existingCompany);
 
-            if (updated) return Ok();
-
-            return BadRequest("Failed to update the company");
+            try
+            {
+                await _companyRepository.UpdateAsync(existingCompany);
+                return CreatedAtAction(nameof(GetCompany), new { id = company.ID }, company);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to update the company.\n{ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
@@ -64,14 +69,17 @@ namespace WebAPI.Controllers
             var existingCompany = await _companyRepository.GetAsync(id);
 
             if (existingCompany == null) return NotFound();
-            bool deleted;
 
-            if (cascade) deleted = await _companyRepository.CascadeDeleteAsync(existingCompany);
-            else deleted = await _companyRepository.DeleteAsync(existingCompany);
-
-            if (deleted) return Ok();
-
-            return BadRequest("Failed to delete the company");
+            try
+            {
+                if (cascade) await _companyRepository.CascadeDeleteAsync(id);
+                else await _companyRepository.DeleteAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to delete the company.\n{ex.Message}");
+            }
         }
     }
 }

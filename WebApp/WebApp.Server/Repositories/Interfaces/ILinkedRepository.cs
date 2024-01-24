@@ -2,6 +2,6 @@
 {
     public interface ILinkedRepository<T> : IGenericRepository<T>
     {
-        Task<bool> CascadeDeleteAsync(T entity);
+        Task CascadeDeleteAsync(int id);
     }
 }

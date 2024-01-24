@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.128-alpha">
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.128-alpha">
   <PropertyGroup>
     <StartupCommand>npm run dev</StartupCommand>
     <JavaScriptTestRoot>.\</JavaScriptTestRoot>
@@ -9,8 +9,6 @@
     <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist</PublishAssetsDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\assets\" />
-    <Folder Include="src\components\icons\" />
     <Folder Include="src\services\" />
   </ItemGroup>
 </Project>

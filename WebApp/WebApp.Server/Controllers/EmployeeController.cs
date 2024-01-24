@@ -32,14 +32,14 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEmployee([FromBody] Employee employee)
         {
-            var addedEmployee = await _employeeRepository.AddAsync(employee);
-            return CreatedAtAction(nameof(GetEmployee), new { id = addedEmployee.ID }, addedEmployee);
+            await _employeeRepository.AddAsync(employee);
+            return CreatedAtAction(nameof(GetEmployee), new { id = employee.ID }, employee);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Employee employee)
+        [HttpPut]
+        public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
         {
-            var existingEmployee = await _employeeRepository.GetAsync(id);
+            var existingEmployee = await _employeeRepository.GetAsync(employee.ID);
 
             if (existingEmployee == null) return NotFound();
 
@@ -51,11 +51,14 @@ namespace WebAPI.Controllers
                 e => e.ParticipatedProjects,
                 e => e.ManagedProjects);
 
-            var updated = await _employeeRepository.UpdateAsync(existingEmployee);
-
-            if (updated) return Ok(); 
-
-            return BadRequest("Failed to update the employee");
+            try
+            {
+                await _employeeRepository.UpdateAsync(existingEmployee);
+                return CreatedAtAction(nameof(GetEmployee), new { id = employee.ID }, existingEmployee);
+            } catch (Exception ex)
+            {
+                return BadRequest($"Failed to update the employee.\n{ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
@@ -63,16 +66,18 @@ namespace WebAPI.Controllers
         {
             var existingEmployee = await _employeeRepository.GetAsync(id);
 
-            if (existingEmployee == null) return NotFound(); 
+            if (existingEmployee == null) return NotFound();
 
-            bool deleted;
-
-            if (cascade) deleted = await _employeeRepository.CascadeDeleteAsync(existingEmployee);
-            else deleted = await _employeeRepository.DeleteAsync(existingEmployee);
-
-            if (deleted) return Ok();
-
-            return BadRequest("Failed to delete the employee");
+            try
+            {
+                if (cascade) await _employeeRepository.CascadeDeleteAsync(id);
+                else await _employeeRepository.DeleteAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to delete the employee.\n{ex.Message}");
+            }
         }
     }
 }

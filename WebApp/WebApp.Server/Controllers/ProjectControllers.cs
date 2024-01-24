@@ -1,6 +1,8 @@
 ﻿using DataAccess.Models;
 
 using Microsoft.AspNetCore.Mvc;
+
+using WebAPI.Services.Implementations;
 using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Controllers
@@ -32,14 +34,14 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProject([FromBody] Project project)
         {
-            var addedProject = await _projectRepository.AddAsync(project);
-            return CreatedAtAction(nameof(GetProject), new { id = addedProject.ID }, addedProject);
+            await _projectRepository.AddAsync(project);
+            return CreatedAtAction(nameof(GetProject), new { id = project.ID }, project);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, [FromBody] Project project)
+        [HttpPut]
+        public async Task<IActionResult> UpdateProject([FromBody] Project project)
         {
-            var existingProject = await _projectRepository.GetAsync(id);
+            var existingProject = await _projectRepository.GetAsync(project.ID);
 
             if (existingProject == null) return NotFound();
 
@@ -51,16 +53,17 @@ namespace WebAPI.Controllers
                 p => p.ManagerID,
                 p => p.CustomerCompanyID,
                 p => p.ContractorCompanyID,
-                p => p.Manager,
-                p => p.CustomerCompany,
-                p => p.ContractorCompany,
                 p => p.Employees);
 
-            var updated = await _projectRepository.UpdateAsync(existingProject);
-
-            if (updated) return Ok();
-
-            return BadRequest("Failed to update the project");
+            try
+            {
+                await _projectRepository.UpdateAsync(existingProject);
+                return CreatedAtAction(nameof(GetProject), new { id = project.ID }, project);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to update the project.\n{ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
@@ -70,11 +73,15 @@ namespace WebAPI.Controllers
 
             if (existingProject == null) return NotFound();
 
-            var deleted = await _projectRepository.DeleteAsync(existingProject);
-
-            if (deleted) return Ok();
-
-            return BadRequest("Failed to delete the project");
+            try
+            {
+                await _projectRepository.DeleteAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to delete the project.\n{ex.Message}");
+            }
         }
     }
 }
